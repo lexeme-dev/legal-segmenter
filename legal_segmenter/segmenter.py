@@ -103,7 +103,7 @@ class Segmenter:
                     curr_sentence["tokens"].append(word)
                     continue
 
-                prior_word = words[idx - 1]
+                prior_word = self._get_prior_word(words, idx)
 
                 # sentence must end on period, so any words which don't end with a period
                 # are not terminal words
@@ -171,6 +171,16 @@ class Segmenter:
         if include_metadata:
             return paragraphs
         return [[s["text"] for s in p["sentences"]] for p in paragraphs]
+
+    def _get_prior_word(self, words: List[str], i: int) -> str:
+        """
+        Returns the word before the current word in the list of words.
+        """
+        if i == 0:
+            return ""
+        if not words[i - 1]:
+            return self._get_prior_word(words, i - 1)
+        return words[i - 1]
 
     def contains_terminal_punctuation(self, word: str) -> bool:
         """
